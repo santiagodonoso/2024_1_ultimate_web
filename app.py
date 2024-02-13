@@ -14,6 +14,7 @@ def _():
 ##############################
 import routes.index
 import routes.get_item
+import routes.delete_item
 
 
 app = default_app
