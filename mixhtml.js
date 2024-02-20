@@ -4,6 +4,7 @@ function cl(text){console.log(text)}
 // html = html.outerHTML
 history.replaceState({"mixonurl":mix_replace_url}, "title", mix_replace_url)
 
+
 // ##############################
 async function mixhtml(el=false){
     
@@ -11,6 +12,7 @@ async function mixhtml(el=false){
         // cl("info mix(el) not given. Using the element itself")
         el = event.target
     }
+
 
     let url = ""
     if( el.hasAttribute("mix-get") ){ url = el.getAttribute("mix-get") }
@@ -52,7 +54,23 @@ async function mix_fetch_data(el){
 
     if(method == "post"){
         if( ! el.getAttribute("mix-data") ){cl(`error : mix_fetch_data() mix-data missing`); return}
-        if( ! document.querySelector(el.getAttribute("mix-data")) ){cl(`error - mix-data element doesn't exist`); return}            
+        if( ! document.querySelector(el.getAttribute("mix-data")) ){cl(`error - mix-data element doesn't exist`); return} 
+        const frm = document.querySelector(el.getAttribute("mix-data"))
+        // Validation inside each element of the form
+        let errors = false
+        const attrs = frm.querySelectorAll("[mix-check]")
+        for(let i = 0; i < attrs.length; i++){
+            attrs[i].classList.remove("mix-error") 
+            const regex = "^"+attrs[i].getAttribute("mix-check")+"$"
+            re = new RegExp(regex)
+            cl(re.test(attrs[i].value))
+            if( ! re.test(attrs[i].value) ){
+                cl("mix-check failed")
+                attrs[i].classList.add("mix-error") 
+                errors = true
+            }
+        }  
+        if(errors) return
     }    
 
     if(el.getAttribute("mix-wait")){
@@ -98,12 +116,13 @@ function process_template(mix_url){
         console.log(`ok : mix() the response data will affect '${template.getAttribute("mix-target")}'`)
         if(! document.querySelector(template.getAttribute("mix-target")) ){console.log(`process_template() - error - mix-target is not in the dom`); return}   
 
-        const position = template.getAttribute("mix-position") || "innerHTML" // default
-        console.log(`ok : x() position is '${position}'`)
-        if( ! ["innerHTML", "replace", "beforebegin", "afterbegin", "beforeend", "afterend"].includes(position) ){
-            console.log(`error : mix() xPosition '${position}' is not valid`); return
-        }
 
+        let position = "innerHTML"
+        if( template.hasAttribute('mix-before')){position = "beforebegin"}
+        if( template.hasAttribute("mix-after")){position = "afterend"}
+        if( template.hasAttribute("mix-top")){position = "afterbegin"}
+        if( template.hasAttribute("mix-bottom")){position = "beforeend"}
+        if( template.hasAttribute("mix-replace")){position = "replace"}
         if(position == "innerHTML"){            
             document.querySelector(template.getAttribute("mix-target")).innerHTML = template.innerHTML
         }
@@ -113,7 +132,8 @@ function process_template(mix_url){
         }
         else{
             document.querySelector(template.getAttribute("mix-target")).insertAdjacentHTML(position, template.innerHTML)
-        }
+        }        
+
 
         if( ! template.getAttribute("mix-push-url") ){ cl(`process_template() - optional - mix-push-url not set`) }
         // const xonurl = template.dataset.xonurl
@@ -178,11 +198,11 @@ window.onpopstate = function(event){
 
 // ##############################
 setInterval(function(){
-    document.querySelectorAll("[mix-live-for]").forEach(el=>{
-        if(el.getAttribute("mix-live-for") <= 0){
+    document.querySelectorAll("[mix-ttl]").forEach(el=>{
+        if(el.getAttribute("mix-ttl") <= 0){
             el.remove()
         }else{
-            el.setAttribute("mix-live-for", el.getAttribute("mix-live-for") - 1000)
+            el.setAttribute("mix-ttl", el.getAttribute("mix-ttl") - 1000)
         }
     })
 }, 1000)
@@ -190,7 +210,7 @@ setInterval(function(){
 // ##############################
 function mix_convert(){
     // cl("converting")
-    document.querySelectorAll("[mix-get], [mix-delete], [mix-post]").forEach( el => {
+    document.querySelectorAll("[mix-get], [mix-delete], [mix-put], [mix-post]").forEach( el => {
         // cl(el)
         let method = "mix-get"
         if(el.hasAttribute("mix-delete")){ method = "mix-delete" }
@@ -207,10 +227,10 @@ function mix_convert(){
                 // cl("converting attribute 'href'")
                 el.setAttribute(`${method}`, el.getAttribute("action"))
             }            
-            if( el.getAttribute("url")){ // TODO: not standard, maybe delete this
-                // cl("converting attribute 'url'")
-                el.setAttribute(`${method}`, el.getAttribute("url"))
-            }                  
+            // if( el.getAttribute("url")){ // TODO: not standard, maybe delete this
+            //     // cl("converting attribute 'url'")
+            //     el.setAttribute(`${method}`, el.getAttribute("url"))
+            // }                  
         }
         if(!el.hasAttribute("mix-focus") && !el.hasAttribute("mix-blur")){
             el.setAttribute("onclick", "mixhtml(); return false")

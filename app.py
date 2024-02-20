@@ -25,6 +25,8 @@ import routes.get_item
 import routes.delete_item
 import routes.create_user
 
+import routes.get_crime
+
 
 app = default_app
 

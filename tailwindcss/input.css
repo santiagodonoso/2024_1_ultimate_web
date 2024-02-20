@@ -6,6 +6,10 @@
     @apply bg-red-500 w-4 h-4 rounded-full
 }
 
+.crime_info{
+    @apply w-full p-4 border border-pink-600
+}
+
 
 
 
