@@ -7,32 +7,21 @@
     <title>Document</title>
     <script src="/mixhtml.js" defer></script>
 </head>
-<body>
+<body class="w-full h-screen overflow-hidden">
 
-    <div id="message"></div>
+    <div class="w-full h-full grid grid-cols-[10fr_10fr]">
 
-    <button mix-get="/item">
-        Test me
-    </button>
+        <div id="map" class="relative w-full h-full bg-neutral-300">
+            <img src="/map.png">
+            <div class="crime absolute top-8 left-8"></div>
+        </div>
 
-    <div id="1" mix-delete="/items/1">One</div>
-    <div id="2" mix-delete="/items/2">Two</div>
-    <div id="3" mix-delete="/items/3"<w>Three</div>
+        <div id="info" class="w-full h-full bg-neutral-500 overflow-y-scroll">
 
-
-    <form id="frm">
-        <input name="user_name" type="text" placeholder="user name">
-        <button id="btn_create"
-            mix-post="/users"
-            mix-data="#frm"
-        >
-            Create user
-        </button>
-        <div id="welcome"></div>
-    </form>
+        </div>
 
 
-
+    </div>
 
 
 

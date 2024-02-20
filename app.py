@@ -5,6 +5,14 @@ from bottle import get, default_app, static_file
 def _():
     return static_file("app.css", ".")
 
+
+##############################
+@get("/map.png")
+def _():
+    return static_file("map.png", ".")
+
+
+
 ##############################
 @get("/mixhtml.js")
 def _():
