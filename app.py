@@ -1,4 +1,4 @@
-from bottle import get, default_app, static_file
+from bottle import get, default_app, static_file, template
 
 ##############################
 @get("/app.css")
@@ -14,9 +14,24 @@ def _():
 
 
 ##############################
+@get("/mugshots/<id>")
+def _(id):
+    return static_file( id, "./mugshots" )
+
+
+##############################
 @get("/mixhtml.js")
 def _():
     return static_file("mixhtml.js", ".")
+
+
+##############################
+@get("/friends/<id>")
+def _(id):
+    return template("_friends")
+
+
+
 
 
 ##############################
